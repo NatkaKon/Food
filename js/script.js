@@ -114,5 +114,70 @@ window.addEventListener('DOMContentLoaded', () => {
     setClock('.timer', deadLine);
 
 
+    //-------------MODAL---------------
+    const modalTrigger = document.querySelectorAll('[data-modal]'),
+          modal = document.querySelector('.modal'),
+          modalCloseBtn = document.querySelector('[data-close]');
+
+
+    //функция открытия модального окна
+
+    function openModal() {
+        modal.style.display = 'block';
+        // Либо вариант с toggle - но тогда назначить класс в верстке
+        document.body.style.overflow = 'hidden'; // чтобы не скролилась страница, когда модальное окно открыто
+        clearInterval(modalTimerId); //если пользователь сам открыл окно, оно непоявится еще раз-очистим интервал
+    }
+
+
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    }); 
+
+    //функция закрытия модального окна
+    function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = ''; //восстановить скрол на странице, когдазакрываем модальное окно
+    }
+    modalCloseBtn.addEventListener('click', closeModal);
+    
+    //клик на подложку закрывает модальное окно
+    modal.addEventListener('click', (event) => {
+        if(event.target === modal){
+            closeModal();
+        }
+    });
+
+    //закрытие по нажатию на Esc
+    document.addEventListener('keydown', (event) => { 
+        if (event.code === 'Escape' ) {
+            closeModal();
+        }
+    });
+    //чтобы МО появлялось когда пользователь долистал страницу до конца или через определнный промежуток времени
+
+    const modalTimerId = setTimeout(openModal, 3000);
+
+    //когда пользователь долистает до конца страницы появится МО
+   function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            //удаляем обработчик события чтобы окно не выскакивало каждый раз, когда мы долистываем до конца, а только 1 раз
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScroll);
+
+
+
+
+
+
+
+
+
+
+
 
 });
